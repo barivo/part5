@@ -13,8 +13,20 @@ const getAll = () => {
     });
 };
 
-const setToken = userToken => {
-  token = userToken;
+const createBlog = blog => {
+  return axios
+    .post(baseUrl, blog, { headers: { Authorization: `Bearer ${getToken()}` } })
+    .then(response => response.data)
+    .catch(error => {
+      console.log("failed to create blog: ", error);
+      return null;
+    });
 };
 
-export default { getAll, setToken };
+const setToken = string => {
+  token = string;
+};
+
+const getToken = () => token;
+
+export default { getAll, setToken, createBlog };
