@@ -23,11 +23,21 @@ const App = () => {
       setUser(user);
       setUsername("");
       setPassword("");
-      if (user) blogService.setToken(user.token);
+      if (user) {
+        blogService.setToken(user.token);
+      } else {
+        sendNotification({ type: "error", msg: "wrong username or password" });
+      }
       window.localStorage.setItem("loggedIn", JSON.stringify(user));
     } catch (exception) {
       console.log("Login error: ", exception);
     }
+  };
+
+  const sendNotification = ({ type, msg }) => {
+    console.log(alert);
+    setAlert({ type, msg });
+    setTimeout(() => setAlert({ type: null, msg: null }), 5000);
   };
 
   const handleCreate = async event => {
@@ -38,7 +48,13 @@ const App = () => {
       setTitle("");
       setAuthor("");
       setUrl("");
-      setBlogs([...blogs, newBlog]);
+      if (newBlog) {
+        setBlogs([...blogs, newBlog]);
+        sendNotification({
+          type: "success ",
+          msg: `a new blog: ${newBlog.title} by ${user.name} was added`
+        });
+      }
     } catch (exception) {
       console.log("Blog creation error: ", exception);
     }
@@ -49,14 +65,11 @@ const App = () => {
     window.localStorage.removeItem("loggedIn");
   };
 
-  const notification = () => {
-    setTimeout(() => setAlert({ type: null, msg: null }), 5000);
-    return (
-      <div>
-        {alert.kind} {alert.msg}
-      </div>
-    );
-  };
+  const notification = () => (
+    <h2>
+      {alert.kind} {alert.msg}
+    </h2>
+  );
 
   const blogHeader = () => (
     <>
@@ -81,7 +94,7 @@ const App = () => {
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedIn");
-    if (loggedUserJSON) {
+    if (loggedUserJSON && user) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
       blogService.setToken(user.token);
@@ -99,10 +112,11 @@ const App = () => {
           handleLogin={handleLogin}
         />
       )}
+
+      {alert.type !== null && notification()}
       {user === null ? null : (
         <>
           {blogHeader()}
-          {alert.kind !== null && notification()}
           <CreateBlog
             title={title}
             author={author}
