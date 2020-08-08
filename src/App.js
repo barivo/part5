@@ -44,8 +44,8 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedIn')
     if (loggedUserJSON && user) {
       setUser(user)
-      const user = JSON.parse(loggedUserJSON)
-      blogService.setToken(user.token)
+      const currentUser = JSON.parse(loggedUserJSON)
+      blogService.setToken(currentUser.token)
     }
   }, [])
 

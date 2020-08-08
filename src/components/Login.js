@@ -1,4 +1,6 @@
 import React from 'react'
+import PropTypes from 'prop-types'
+
 const Login = ({
   setUser,
   setUsername,
@@ -23,8 +25,10 @@ const Login = ({
       } else {
         sendNotification({ type: 'error', msg: 'wrong username or password' })
       }
+
       window.localStorage.setItem('loggedIn', JSON.stringify(user))
-      loginFormRef.current.toggleVisible()
+
+      if (loginFormRef.current) loginFormRef.current.toggleVisible()
     } catch (exception) {
       console.log('Login error: ', exception)
     }
@@ -55,4 +59,14 @@ const Login = ({
     </div>
   )
 }
+
+Login.propTypes = {
+  setUsername: PropTypes.func.isRequired,
+  setPassword: PropTypes.func.isRequired,
+  loginService: PropTypes.func.isRequired,
+  sendNotification: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  password: PropTypes.string.isRequired,
+}
+
 export default Login
