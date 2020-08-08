@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-const Blog = ({ blog }) => {
+import blogService from '../services/blogs'
+
+const Blog = ({ blog, blogs, setBlogs }) => {
   const [visible, setVisible] = useState(false)
   const showCompactView = { display: visible ? 'none' : '' }
   const showFullView = { display: visible ? '' : 'none' }
@@ -10,6 +12,24 @@ const Blog = ({ blog }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
+  }
+  const handleLikesChange = async () => {
+    //
+    const updatedBlog = {
+      id: blog.id,
+      user: blog.user,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url,
+    }
+
+    const newBlog = await blogService.updateBlog(updatedBlog)
+    const updatedBlogs = blogs.filter(b => b.id !== newBlog.id)
+    setBlogs([...updatedBlogs, newBlog])
+  }
+  const handleDelete = async () => {
+    await blogService.deleteBlog(blog.id)
   }
 
   return (
@@ -23,8 +43,11 @@ const Blog = ({ blog }) => {
         {blog.url}
         <br />
         likes: {blog.likes}
+        <button onClick={() => handleLikesChange()}>like</button>
         <br />
         <button onClick={() => setVisible(false)}>hide</button>
+        <br />
+        <button onClick={() => handleDelete()}>delete</button>
       </span>
     </div>
   )
