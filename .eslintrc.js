@@ -1,5 +1,6 @@
 module.exports = {
   env: {
+    unix: true,
     browser: true,
     es6: true,
     'jest/globals': true,

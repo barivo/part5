@@ -78,7 +78,7 @@ const App = () => {
       {user && (
         <Togglable
           ref={blogFormRef}
-          showButtonLabel="new note"
+          showButtonLabel="create new blog"
           removeButtonLabel="cancel"
         >
           <CreateBlog
