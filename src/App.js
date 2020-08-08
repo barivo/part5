@@ -43,8 +43,8 @@ const App = () => {
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedIn')
     if (loggedUserJSON && user) {
-      const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      const user = JSON.parse(loggedUserJSON)
       blogService.setToken(user.token)
     }
   }, [])
@@ -99,7 +99,12 @@ const App = () => {
       )}
       <br />
 
-      <BlogsList user={user} blogs={blogs} setBlogs={setBlogs} />
+      <BlogsList
+        user={user}
+        blogs={blogs}
+        setBlogs={setBlogs}
+        sendNotification={sendNotification}
+      />
     </div>
   )
 }

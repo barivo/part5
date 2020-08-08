@@ -36,7 +36,7 @@ const updateBlog = blog => {
 }
 
 const deleteBlog = id => {
-  axios
+  return axios
     .delete(`${baseUrl}/${id}`, {
       headers: { Authorization: `Bearer ${getToken()}` },
     })

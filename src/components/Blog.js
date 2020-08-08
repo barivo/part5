@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs }) => {
+const Blog = ({ blog, blogs, setBlogs, sendNotification }) => {
   const [visible, setVisible] = useState(false)
   const showCompactView = { display: visible ? 'none' : '' }
   const showFullView = { display: visible ? '' : 'none' }
@@ -29,7 +29,16 @@ const Blog = ({ blog, blogs, setBlogs }) => {
     setBlogs([...updatedBlogs, newBlog])
   }
   const handleDelete = async () => {
-    await blogService.deleteBlog(blog.id)
+    const result = await blogService.deleteBlog(blog.id)
+    if (result) {
+      const updatedBlogs = blogs.filter(b => b.id !== blog.id)
+      setBlogs([...updatedBlogs])
+    } else {
+      sendNotification({
+        type: 'error',
+        msg: 'only blog owners can delete blogs',
+      })
+    }
   }
 
   return (

@@ -17,7 +17,7 @@ const CreateBlog = ({
   const handleCreate = async event => {
     event.preventDefault()
     try {
-      const blog = { title: title, author: author, url: url }
+      const blog = { title: title, author: author, url: url, userId: user.id }
       const newBlog = await blogService.createBlog(blog)
       setTitle('')
       setAuthor('')
