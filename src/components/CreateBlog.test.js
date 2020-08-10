@@ -26,6 +26,11 @@ describe('<CreateBlog />', () => {
     fireEvent.change(url, { target: { value: 'blog.url' } })
 
     fireEvent.click(createButton)
-    expect(mockHandler.mock.calls).toHaveLength(2)
+
+    expect(mockHandler).toHaveBeenCalledWith({
+      author: 'blog.author',
+      title: 'blog.title',
+      url: 'blog.url',
+    })
   })
 })
