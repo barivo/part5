@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs, sendNotification }) => {
+const Blog = ({ blog, blogs, setBlogs, sendNotification, incrementLikes }) => {
   const [visible, setVisible] = useState(false)
   const showCompactView = { display: visible ? 'none' : '' }
   const showFullView = { display: visible ? '' : 'none' }
@@ -13,8 +13,8 @@ const Blog = ({ blog, blogs, setBlogs, sendNotification }) => {
     borderWidth: 1,
     marginBottom: 5,
   }
-  const handleLikesChange = async () => {
-    //
+
+  const handleAddingLikes = () => {
     const updatedBlog = {
       id: blog.id,
       user: blog.user,
@@ -23,15 +23,13 @@ const Blog = ({ blog, blogs, setBlogs, sendNotification }) => {
       title: blog.title,
       url: blog.url,
     }
-
-    const newBlog = await blogService.updateBlog(updatedBlog)
-    const updatedBlogs = blogs.filter(b => b.id !== newBlog.id)
-    setBlogs([...updatedBlogs, newBlog])
+    incrementLikes(updatedBlog)
   }
+
   const handleDelete = async () => {
     const result = await blogService.deleteBlog(blog.id)
     if (result) {
-      const updatedBlogs = blogs.filter(b => b.id !== blog.id)
+      const updatedBlogs = blogs.filter((b) => b.id !== blog.id)
       setBlogs([...updatedBlogs])
     } else {
       sendNotification({
@@ -42,17 +40,19 @@ const Blog = ({ blog, blogs, setBlogs, sendNotification }) => {
   }
 
   return (
-    <div style={blogStyle}>
-      {blog.title} {blog.author}
+    <div className="blog" style={blogStyle}>
+      <span className="blogTitle">
+        {blog.title} {blog.author}
+      </span>
       <button style={showCompactView} onClick={() => setVisible(true)}>
         view
       </button>
       <br />
-      <span style={showFullView}>
+      <span style={showFullView} className="togglableContent">
         {blog.url}
         <br />
         likes: {blog.likes}
-        <button onClick={() => handleLikesChange()}>like</button>
+        <button onClick={() => handleAddingLikes()}>like</button>
         <br />
         <button onClick={() => setVisible(false)}>hide</button>
         <br />

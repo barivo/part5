@@ -25,6 +25,33 @@ const App = () => {
     setTimeout(() => setAlert({ type: null, msg: null }), 5000)
   }
 
+  const incrementLikes = async (updatedBlog) => {
+    const newBlog = await blogService.updateBlog(updatedBlog)
+    const updatedBlogs = blogs.filter((b) => b.id !== newBlog.id)
+    setBlogs([...updatedBlogs, newBlog])
+  }
+
+  const addBlog = async (blog) => {
+    blog.userId = user.id
+    try {
+      const newBlog = await blogService.createBlog(blog)
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+
+      if (newBlog) {
+        setBlogs([...blogs, newBlog])
+        sendNotification({
+          type: 'success ',
+          msg: `a new blog: ${newBlog.title} by ${user.name} was added`,
+        })
+        blogFormRef.current.toggleVisible()
+      }
+    } catch (exception) {
+      console.log('Blog creation error: ', exception)
+    }
+  }
+
   const handleLogOut = () => {
     setUser(null)
     window.localStorage.removeItem('loggedIn')
@@ -37,7 +64,7 @@ const App = () => {
   )
 
   useEffect(() => {
-    blogService.getAll().then(blogs => setBlogs(blogs))
+    blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
 
   useEffect(() => {
@@ -81,20 +108,7 @@ const App = () => {
           showButtonLabel="create new blog"
           removeButtonLabel="cancel"
         >
-          <CreateBlog
-            user={user}
-            title={title}
-            author={author}
-            url={url}
-            setTitle={setTitle}
-            setAuthor={setAuthor}
-            setUrl={setUrl}
-            blogs={blogs}
-            setBlogs={setBlogs}
-            sendNotification={sendNotification}
-            blogFormRef={blogFormRef}
-            blogService={blogService}
-          />
+          <CreateBlog addBlog={addBlog} />
         </Togglable>
       )}
       <br />
@@ -102,6 +116,7 @@ const App = () => {
       <BlogsList
         user={user}
         blogs={blogs}
+        incrementLikes={incrementLikes}
         setBlogs={setBlogs}
         sendNotification={sendNotification}
       />

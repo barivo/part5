@@ -1,64 +1,36 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-const CreateBlog = ({
-  user,
-  title,
-  setTitle,
-  author,
-  setAuthor,
-  url,
-  setUrl,
-  blogs,
-  setBlogs,
-  sendNotification,
-  blogFormRef,
-  blogService,
-}) => {
-  const handleCreate = async event => {
+const CreateBlog = ({ addBlog }) => {
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
+
+  const handleCreate = async (event) => {
     event.preventDefault()
-    try {
-      const blog = { title: title, author: author, url: url, userId: user.id }
-      const newBlog = await blogService.createBlog(blog)
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-
-      if (newBlog) {
-        setBlogs([...blogs, newBlog])
-        sendNotification({
-          type: 'success ',
-          msg: `a new blog: ${newBlog.title} by ${user.name} was added`,
-        })
-        blogFormRef.current.toggleVisible()
-      }
-    } catch (exception) {
-      console.log('Blog creation error: ', exception)
-    }
+    const blog = { title: title, author: author, url: url }
+    addBlog(blog)
   }
 
   return (
-    <form onSubmit={handleCreate}>
+    <form className="blogForm" onSubmit={handleCreate}>
       <h2>create new</h2>
       title
       <input
-        type="text"
-        label="title"
+        id="title"
         value={title}
-        onChange={event => setTitle(event.target.value)}
+        onChange={(event) => setTitle(event.target.value)}
       />
       <br />
       author
       <input
-        type="text"
-        label="author"
+        id="author"
         value={author}
         onChange={({ target }) => setAuthor(target.value)}
       />
       <br />
       url
       <input
-        type="text"
-        labelt="url"
+        id="url"
         value={url}
         onChange={({ target }) => setUrl(target.value)}
       />
