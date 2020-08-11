@@ -31,3 +31,4 @@ mongo.js
 
 #cypress testing
 cypress/videos/
+cypress/screenshots/

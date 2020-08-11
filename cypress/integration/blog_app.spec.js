@@ -1,7 +1,7 @@
 const { func } = require('prop-types')
 
-describe('Blog app', function () {
-  beforeEach(function () {
+describe('Blog app', function() {
+  beforeEach(function() {
     cy.request('POST', 'http://localhost:3001/api/testing/reset')
     const user = {
       name: 'Matti Luukkainen',
@@ -12,7 +12,7 @@ describe('Blog app', function () {
     cy.visit('http://localhost:3000')
   })
 
-  it('Login form is shown', function () {
+  it('Login form is shown', function() {
     cy.visit('http://localhost:3000')
     cy.contains('Blogs')
     cy.contains('login').click()
@@ -22,13 +22,13 @@ describe('Blog app', function () {
     cy.contains('password')
   })
 
-  describe('Login', function () {
-    it('succeeds with correct credentials', function () {
+  describe('Login', function() {
+    it('succeeds with correct credentials', function() {
       cy.login({ username: 'mluukkai', password: 'password' })
       cy.contains('Matti Luukkainen logged in')
     })
 
-    it('fails with wrong credentials', function () {
+    it('fails with wrong credentials', function() {
       cy.uiLogin({ username: 'mluukkai', password: 'wrong' })
 
       cy.get('.error')
@@ -37,11 +37,11 @@ describe('Blog app', function () {
     })
   })
 
-  describe('When logged in', function () {
-    beforeEach(function () {
+  describe('When logged in', function() {
+    beforeEach(function() {
       cy.login({ username: 'mluukkai', password: 'password' })
     })
-    it('a new blog entry can be created', function () {
+    it('a new blog entry can be created', function() {
       cy.createBlog({
         title: 'first and only',
         author: 'author of first and...',
@@ -55,6 +55,25 @@ describe('Blog app', function () {
 
       cy.contains('testing one')
       cy.contains('first and only')
+    })
+
+    it.only('user can like a blog', function() {
+      cy.createBlog({
+        title: 'first and only',
+        author: 'author of first and...',
+        url: 'www.ibm.com',
+      })
+      cy.contains('view').click()
+
+      cy.contains('like')
+        .parent()
+        .as('likes')
+
+      cy.contains('like').as('likesButton')
+      cy.get('@likes').should('contain', '0')
+
+      cy.get('@likesButton').click()
+      cy.get('@likes').should('contain', '1')
     })
   })
 })
