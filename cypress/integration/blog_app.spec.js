@@ -71,6 +71,7 @@ describe('Blog app', function() {
         title: 'second second test',
         author: 'mluukkai',
         url: 'www.ibm.com',
+        likes: 2,
       })
     })
 
@@ -82,13 +83,13 @@ describe('Blog app', function() {
         .as('likes')
 
       cy.contains('like').as('likesButton')
-      cy.get('@likes').should('contain', '0')
+      cy.get('@likes').should('contain', 2)
 
       cy.get('@likesButton').click()
-      cy.get('@likes').should('contain', '1')
+      cy.get('@likes').should('contain', 3)
     })
 
-    it.only('user can deltete their own  blog', function() {
+    it('user can deltete their own  blog', function() {
       cy.login({ username: 'mluukkai', password: 'password' })
       cy.contains('view').click()
       cy.contains('delete').click()
@@ -96,12 +97,42 @@ describe('Blog app', function() {
       cy.contains('second second test').should('not.exist')
     })
 
-    it.only("user can not deltete someone else's blog", function() {
+    it("user can not deltete someone else's blog", function() {
       cy.login({ username: 'samisami', password: 'password' })
       cy.contains('view').click()
       cy.contains('delete').click()
       //cy.get('.blogList').should('visible', 'sssecond second test')
       cy.contains('second second test').should('exist')
+    })
+
+    it('blogs are ordered from most likes to least', function() {
+      cy.createBlog({
+        title: 'last spot',
+        author: 'mluukkai',
+        url: 'www.ibm.com',
+        likes: 0,
+      })
+      cy.createBlog({
+        title: 'top spot',
+        author: 'mluukkai',
+        url: 'www.ibm.com',
+        likes: 100,
+      })
+
+      cy.get('.blog').as('blog')
+
+      cy.get('@blog')
+        .first()
+        .should('contain', 'top spot')
+
+      cy.get('@blog')
+        .first()
+        .next()
+        .should('contain', 'second')
+
+      cy.get('@blog')
+        .last()
+        .should('contain', 'last spot')
     })
   })
 })

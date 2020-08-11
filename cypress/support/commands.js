@@ -49,7 +49,7 @@ Cypress.Commands.add('createUser', ({ name, username, password }) => {
   cy.visit('http://localhost:3000')
 })
 
-Cypress.Commands.add('createBlog', ({ title, author, url }) => {
+Cypress.Commands.add('createBlog', ({ title, author, url, likes }) => {
   const currentUser = JSON.parse(localStorage.getItem('loggedIn'))
 
   cy.request({
@@ -60,6 +60,7 @@ Cypress.Commands.add('createBlog', ({ title, author, url }) => {
       title,
       author,
       url,
+      likes,
       userId: currentUser.id,
     },
     headers: {
