@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+// eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect, useRef } from 'react'
 import Login from './components/Login'
 import BlogsList from './components/BlogsList'
@@ -11,12 +12,8 @@ import loginService from './services/login'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  // eslint-disable-next-line no-unused-vars
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [alert, setAlert] = useState({ type: null, msg: '' })
 
   const blogFormRef = useRef()
@@ -27,9 +24,9 @@ const App = () => {
     setTimeout(() => setAlert({ type: null, msg: null }), 5000)
   }
 
-  const incrementLikes = async (updatedBlog) => {
+  const incrementLikes = async updatedBlog => {
     const newBlog = await blogService.updateBlog(updatedBlog)
-    const updatedBlogs = blogs.filter((b) => b.id !== newBlog.id)
+    const updatedBlogs = blogs.filter(b => b.id !== newBlog.id)
     setBlogs([...updatedBlogs, newBlog])
   }
 
@@ -53,13 +50,10 @@ const App = () => {
     }
   }
 
-  const addBlog = async (blog) => {
+  const addBlog = async blog => {
     blog.userId = user.id
     try {
       const newBlog = await blogService.createBlog(blog)
-      setTitle('')
-      setAuthor('')
-      setUrl('')
 
       if (newBlog) {
         setBlogs([...blogs, newBlog])
@@ -94,7 +88,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    blogService.getAll().then(blogs => setBlogs(blogs))
   }, [])
 
   useEffect(() => {

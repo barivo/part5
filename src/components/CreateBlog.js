@@ -5,10 +5,13 @@ const CreateBlog = ({ addBlog }) => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const handleCreate = async (event) => {
+  const handleCreate = async event => {
     event.preventDefault()
     const blog = { title: title, author: author, url: url }
     addBlog(blog)
+    setTitle('')
+    setAuthor('')
+    setUrl('')
   }
 
   return (
@@ -18,7 +21,7 @@ const CreateBlog = ({ addBlog }) => {
       <input
         id="title"
         value={title}
-        onChange={(event) => setTitle(event.target.value)}
+        onChange={event => setTitle(event.target.value)}
       />
       <br />
       author

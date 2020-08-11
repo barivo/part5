@@ -10,11 +10,11 @@ const BlogsList = ({
   incrementLikes,
 }) => {
   return (
-    <div>
+    <div className="blogList">
       {user !== null &&
         blogs
           .sort((a, b) => b.likes - a.likes)
-          .map((blog) => (
+          .map(blog => (
             <Blog
               key={blog.id}
               blog={blog}

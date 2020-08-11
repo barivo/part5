@@ -2,14 +2,13 @@ const { func } = require('prop-types')
 
 describe('Blog app', function() {
   beforeEach(function() {
+    window.localStorage.removeItem('loggedIn')
     cy.request('POST', 'http://localhost:3001/api/testing/reset')
-    const user = {
+    cy.createUser({
       name: 'Matti Luukkainen',
       username: 'mluukkai',
       password: 'password',
-    }
-    cy.request('POST', 'http://localhost:3001/api/users', user)
-    cy.visit('http://localhost:3000')
+    })
   })
 
   it('Login form is shown', function() {
@@ -43,7 +42,7 @@ describe('Blog app', function() {
     })
     it('a new blog entry can be created', function() {
       cy.createBlog({
-        title: 'first and only',
+        title: 'first and first',
         author: 'author of first and...',
         url: 'www.ibm.com',
       })
@@ -54,15 +53,28 @@ describe('Blog app', function() {
       cy.get('#submit-blog').click()
 
       cy.contains('testing one')
-      cy.contains('first and only')
+      cy.contains('first and first')
     })
+  })
 
-    it.only('user can like a blog', function() {
+  describe('Changing blogs', function() {
+    beforeEach(function() {
+      cy.createUser({
+        name: 'Sami ullut',
+        username: 'samisami',
+        password: 'password',
+      })
+
+      cy.login({ username: 'mluukkai', password: 'password' })
+
       cy.createBlog({
-        title: 'first and only',
-        author: 'author of first and...',
+        title: 'second second test',
+        author: 'mluukkai',
         url: 'www.ibm.com',
       })
+    })
+
+    it('user can like their blog', function() {
       cy.contains('view').click()
 
       cy.contains('like')
@@ -74,6 +86,22 @@ describe('Blog app', function() {
 
       cy.get('@likesButton').click()
       cy.get('@likes').should('contain', '1')
+    })
+
+    it.only('user can deltete their own  blog', function() {
+      cy.login({ username: 'mluukkai', password: 'password' })
+      cy.contains('view').click()
+      cy.contains('delete').click()
+      // cy.get('.blogList').should('not.visible', 'second second test')
+      cy.contains('second second test').should('not.exist')
+    })
+
+    it.only("user can not deltete someone else's blog", function() {
+      cy.login({ username: 'samisami', password: 'password' })
+      cy.contains('view').click()
+      cy.contains('delete').click()
+      //cy.get('.blogList').should('visible', 'sssecond second test')
+      cy.contains('second second test').should('exist')
     })
   })
 })

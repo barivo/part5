@@ -39,7 +39,19 @@ Cypress.Commands.add('login', ({ username, password }) => {
   })
 })
 
+Cypress.Commands.add('createUser', ({ name, username, password }) => {
+  const user = {
+    name,
+    username,
+    password,
+  }
+  cy.request('POST', 'http://localhost:3001/api/users', user)
+  cy.visit('http://localhost:3000')
+})
+
 Cypress.Commands.add('createBlog', ({ title, author, url }) => {
+  const currentUser = JSON.parse(localStorage.getItem('loggedIn'))
+
   cy.request({
     method: 'POST',
     url: 'http://localhost:3001/api/blogs',
@@ -48,6 +60,7 @@ Cypress.Commands.add('createBlog', ({ title, author, url }) => {
       title,
       author,
       url,
+      userId: currentUser.id,
     },
     headers: {
       Authorization: `bearer ${
