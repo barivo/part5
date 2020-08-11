@@ -4,7 +4,9 @@ const currentUser = ({ user, handleLogOut }) => {
   const status = () => (
     <div>
       {user.name} logged in
-      <button onClick={() => handleLogOut()}>logout</button>
+      <button id="logout" onClick={() => handleLogOut()}>
+        logout
+      </button>
     </div>
   )
   return <> {user !== null && status()}</>

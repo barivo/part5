@@ -29,3 +29,5 @@ yarn-error.log*
 #mongo
 mongo.js
 
+#cypress testing
+cypress/videos/

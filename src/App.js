@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react'
 import Login from './components/Login'
 import BlogsList from './components/BlogsList'
@@ -10,6 +11,7 @@ import loginService from './services/login'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
+  // eslint-disable-next-line no-unused-vars
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [title, setTitle] = useState('')
@@ -29,6 +31,26 @@ const App = () => {
     const newBlog = await blogService.updateBlog(updatedBlog)
     const updatedBlogs = blogs.filter((b) => b.id !== newBlog.id)
     setBlogs([...updatedBlogs, newBlog])
+  }
+
+  const handleLogin = async ({ username, password }) => {
+    try {
+      const user = await loginService({ username, password })
+
+      window.localStorage.setItem('loggedIn', JSON.stringify(user))
+      setUser(user)
+      setUsername('')
+      setPassword('')
+      if (user) {
+        blogService.setToken(user.token)
+      } else {
+        sendNotification({ type: 'error', msg: 'wrong username or password' })
+      }
+
+      if (loginFormRef.current) loginFormRef.current.toggleVisible()
+    } catch (exception) {
+      console.log('Login error: ', exception)
+    }
   }
 
   const addBlog = async (blog) => {
@@ -69,9 +91,9 @@ const App = () => {
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedIn')
-    if (loggedUserJSON && user) {
-      setUser(user)
+    if (loggedUserJSON) {
       const currentUser = JSON.parse(loggedUserJSON)
+      setUser(currentUser)
       blogService.setToken(currentUser.token)
     }
   }, [])
@@ -85,23 +107,12 @@ const App = () => {
           showButtonLabel="login"
           removeButtonLabel="clear"
         >
-          <Login
-            setUser={setUser}
-            setUsername={setUsername}
-            username={username}
-            password={password}
-            setPassword={setPassword}
-            loginService={loginService}
-            blogService={blogService}
-            sendNotification={sendNotification}
-            loginFormRef={loginFormRef}
-          />
+          <Login handleLogin={handleLogin} />
         </Togglable>
       )}
       <CurrentUser user={user} handleLogOut={handleLogOut} />
       {alert.type !== null && notification()}
       <br />
-
       {user && (
         <Togglable
           ref={blogFormRef}
@@ -112,7 +123,6 @@ const App = () => {
         </Togglable>
       )}
       <br />
-
       <BlogsList
         user={user}
         blogs={blogs}
