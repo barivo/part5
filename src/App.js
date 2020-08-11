@@ -79,11 +79,19 @@ const App = () => {
     window.localStorage.removeItem('loggedIn')
   }
 
-  const notification = () => (
-    <h2>
-      {alert.kind} {alert.msg}
-    </h2>
-  )
+  const notification = () => {
+    const alertClass = alert.type === 'error' ? 'error' : 'success'
+    const borderStyle =
+      alert.type === 'error' ? 'solid 5px red' : 'solid 5px green'
+    return (
+      <h2
+        className={alertClass}
+        style={{ border: borderStyle, padding: '15px' }}
+      >
+        {alert.type} {alert.msg}
+      </h2>
+    )
+  }
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))

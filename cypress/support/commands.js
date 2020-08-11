@@ -25,11 +25,24 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('login', ({ username, password }) => {
-  cy.request('POST', 'http://localhost:3001/api/login', {
-    username,
-    password,
+  cy.request({
+    method: 'POST',
+    url: 'http://localhost:3001/api/login',
+    failOnStatusCode: false,
+    body: {
+      username,
+      password,
+    },
   }).then(({ body }) => {
     localStorage.setItem('loggedIn', JSON.stringify(body))
     cy.visit('http://localhost:3000')
   })
+})
+
+Cypress.Commands.add('uiLogin', ({ username, password }) => {
+  cy.visit('http://localhost:3000')
+  cy.contains('login').click()
+  cy.get('#username').type(username)
+  cy.get('#password').type(password)
+  cy.get('#login-button').click()
 })

@@ -12,7 +12,7 @@ describe('Blog app', function () {
     cy.visit('http://localhost:3000')
   })
 
-  it('login form is shown', function () {
+  it('Login form is shown', function () {
     cy.visit('http://localhost:3000')
     cy.contains('Blogs')
     cy.contains('login').click()
@@ -22,23 +22,32 @@ describe('Blog app', function () {
     cy.contains('password')
   })
 
-  it('valid user can log in', function () {
-    cy.login({ username: 'mluukkai', password: 'password' })
-    cy.contains('Matti Luukkainen logged in')
-  })
-
-  describe('when logged in', function () {
+  describe('Login', function () {
     beforeEach(function () {
-      cy.login({ username: 'mluukkai', password: 'password' })
+      window.localStorage.removeItem('loggedIn')
     })
-    it('a new blog entry can be created', function () {
-      cy.contains('create new blog').click()
-      cy.get('#title').type('testing one ')
-      cy.get('#author').type('mluukkai')
-      cy.get('#url').type('www.testing.com')
-      cy.get('#submit-blog').click()
 
-      cy.contains('testing one')
+    it('succeeds with correct credentials', function () {
+      cy.login({ username: 'mluukkai', password: 'password' })
+      cy.contains('Matti Luukkainen logged in')
     })
+
+    it('fails with wrong credentials', function () {
+      cy.uiLogin({ username: 'mluukkai', password: 'wrong' })
+
+      cy.get('.error')
+        .should('contain', 'wrong username or password')
+        .and('have.css', 'border', '5px solid rgb(255, 0, 0)')
+    })
+
+    // it.skip('a new blog entry can be created', function () {
+    //   cy.contains('create new blog').click()
+    //   cy.get('#title').type('testing one ')
+    //   cy.get('#author').type('mluukkai')
+    //   cy.get('#url').type('www.testing.com')
+    //   cy.get('#submit-blog').click()
+
+    //   cy.contains('testing one')
+    // })
   })
 })
