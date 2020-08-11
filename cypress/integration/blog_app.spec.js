@@ -23,10 +23,6 @@ describe('Blog app', function () {
   })
 
   describe('Login', function () {
-    beforeEach(function () {
-      window.localStorage.removeItem('loggedIn')
-    })
-
     it('succeeds with correct credentials', function () {
       cy.login({ username: 'mluukkai', password: 'password' })
       cy.contains('Matti Luukkainen logged in')
@@ -39,15 +35,26 @@ describe('Blog app', function () {
         .should('contain', 'wrong username or password')
         .and('have.css', 'border', '5px solid rgb(255, 0, 0)')
     })
+  })
 
-    // it.skip('a new blog entry can be created', function () {
-    //   cy.contains('create new blog').click()
-    //   cy.get('#title').type('testing one ')
-    //   cy.get('#author').type('mluukkai')
-    //   cy.get('#url').type('www.testing.com')
-    //   cy.get('#submit-blog').click()
+  describe('When logged in', function () {
+    beforeEach(function () {
+      cy.login({ username: 'mluukkai', password: 'password' })
+    })
+    it('a new blog entry can be created', function () {
+      cy.createBlog({
+        title: 'first and only',
+        author: 'author of first and...',
+        url: 'www.ibm.com',
+      })
+      cy.contains('create new blog').click()
+      cy.get('#title').type('testing one ')
+      cy.get('#author').type('mluukkai')
+      cy.get('#url').type('www.testing.com')
+      cy.get('#submit-blog').click()
 
-    //   cy.contains('testing one')
-    // })
+      cy.contains('testing one')
+      cy.contains('first and only')
+    })
   })
 })
